@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"sync"
 
 	"github.com/spf13/viper"
@@ -12,12 +13,11 @@ var (
 	instance *viper.Viper
 )
 
-func LoadConfig[T any](filename, filetype string) (T, error) {
+func LoadConfig[T any](in io.Reader, filetype string) (T, error) {
 	var result T
 	v := viper.New()
-	v.SetConfigFile(filename)
 	v.SetConfigType(filetype)
-	if err := v.ReadInConfig(); err != nil {
+	if err := v.ReadConfig(in); err != nil {
 		return result, fmt.Errorf("error reading config: %v", err)
 	}
 	if err := v.Unmarshal(&result); err != nil {

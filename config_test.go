@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -25,11 +26,11 @@ func TestLoadConfig(t *testing.T) {
 		{
 			name: "expected behaviour",
 			input: []byte(`
-			sql:
-				address: "127.0.0.1"
-				port: ":9"
-				dbName: "test"
-			`),
+sql:
+  address: "127.0.0.1"
+  port: ":9"
+  dbName: "test"
+`),
 			want: AppConfig{
 				Sql: struct {
 					Address string "mapstructure:\"address\""
@@ -47,7 +48,7 @@ func TestLoadConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := LoadConfig[AppConfig]("config", "yaml")
+			got, err := LoadConfig[AppConfig](bytes.NewReader(tt.input), "yaml")
 			if tt.wantErr != (err != nil) {
 				t.Fatalf("%s failed. wantErr: %v, err: %v", tt.name, tt.wantErr, err)
 			}
