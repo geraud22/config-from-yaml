@@ -9,10 +9,10 @@ import (
 
 type AppConfig struct {
 	Sql struct {
-		Address string `mapstructure:"address"`
-		Port    string `mapstructure:"port"`
-		DbName  string `mapstructure:"dbName"`
-	} `mapstructure:"sql"`
+		Address string `mapstructure:"address" validate:"required"`
+		Port    string `mapstructure:"port" validate:"required"`
+		DbName  string `mapstructure:"dbName" validate:"required"`
+	} `mapstructure:"sql" validate:"required"`
 }
 
 func TestLoadConfig(t *testing.T) {
@@ -33,9 +33,9 @@ sql:
 `),
 			want: AppConfig{
 				Sql: struct {
-					Address string "mapstructure:\"address\""
-					Port    string "mapstructure:\"port\""
-					DbName  string "mapstructure:\"dbName\""
+					Address string "mapstructure:\"address\" validate:\"required\""
+					Port    string "mapstructure:\"port\" validate:\"required\""
+					DbName  string "mapstructure:\"dbName\" validate:\"required\""
 				}{
 					Address: "127.0.0.1",
 					Port:    ":9",
