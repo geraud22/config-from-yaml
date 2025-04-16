@@ -24,12 +24,12 @@ func TestLoadConfig(t *testing.T) {
 		wantErr     bool
 	}{
 		{
-			name: "expected behaviour",
+			name: "correctly load all fields - case insensitive",
 			input: []byte(`
-sql:
+SQL:
   address: "127.0.0.1"
   port: ":9"
-  dbName: "test"
+  DBnAME: "test"
 `),
 			want: AppConfig{
 				Sql: struct {
