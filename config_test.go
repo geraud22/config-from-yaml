@@ -1,4 +1,4 @@
-package cfy
+package main
 
 import (
 	"testing"
@@ -37,7 +37,7 @@ func TestLoadConfig(t *testing.T) {
 				t.Fatalf("%s failed. wantErr: %v, err: %v", tt.name, tt.wantErr, err)
 			}
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Fatalf("%s mismatch. (-want, +got):\n%s", diff)
+				t.Fatalf("%s mismatch. (-want, +got):\n%s", tt.name, diff)
 			}
 		})
 	}

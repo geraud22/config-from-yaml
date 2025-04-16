@@ -1,4 +1,4 @@
-package cfy
+package main
 
 import (
 	"fmt"
@@ -11,6 +11,10 @@ var (
 	once     sync.Once
 	instance *viper.Viper
 )
+
+func LoadConfig() (interface{}, error) {
+	return nil, nil
+}
 
 func NewConfig(filename string) *viper.Viper {
 	once.Do(func() {
