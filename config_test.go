@@ -6,33 +6,48 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+type AppConfig struct {
+	Sql struct {
+		Address string `mapstructure:"address"`
+		Port    string `mapstructure:"port"`
+		DbName  string `mapstructure:"dbName"`
+	} `mapstructure:"sql"`
+}
+
 func TestLoadConfig(t *testing.T) {
 	tests := []struct {
-		name    string
-		input   []byte
-		want    interface{}
-		wantErr bool
+		name        string
+		input       []byte
+		desiredType any
+		want        any
+		wantErr     bool
 	}{
 		{
 			name: "expected behaviour",
 			input: []byte(`
-			app:
-				name: "Test"
-				version: "9.3"
-				mode: "dev"
+			sql:
+				address: "127.0.0.1"
+				port: ":9"
+				dbName: "test"
 			`),
-			want: struct {
-				Name    string `mapstructure:"name"`
-				Version string `mapstructure:"version"`
-				Mode    string `mapstructure:"mode"`
-			}{},
+			want: AppConfig{
+				Sql: struct {
+					Address string "mapstructure:\"address\""
+					Port    string "mapstructure:\"port\""
+					DbName  string "mapstructure:\"dbName\""
+				}{
+					Address: "127.0.0.1",
+					Port:    ":9",
+					DbName:  "test",
+				},
+			},
 			wantErr: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := LoadConfig()
+			got, err := LoadConfig[AppConfig]("config", "yaml")
 			if tt.wantErr != (err != nil) {
 				t.Fatalf("%s failed. wantErr: %v, err: %v", tt.name, tt.wantErr, err)
 			}

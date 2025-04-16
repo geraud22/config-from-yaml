@@ -12,8 +12,18 @@ var (
 	instance *viper.Viper
 )
 
-func LoadConfig() (interface{}, error) {
-	return nil, nil
+func LoadConfig[T any](filename, filetype string) (T, error) {
+	var result T
+	v := viper.New()
+	v.SetConfigFile(filename)
+	v.SetConfigType(filetype)
+	if err := v.ReadInConfig(); err != nil {
+		return result, fmt.Errorf("error reading config: %v", err)
+	}
+	if err := v.Unmarshal(&result); err != nil {
+		return result, fmt.Errorf("error unmarshalling config into provided struct: %v", err)
+	}
+	return result, nil
 }
 
 func NewConfig(filename string) *viper.Viper {
