@@ -12,7 +12,7 @@ type AppConfig struct {
 		Address string `mapstructure:"address" validate:"required"`
 		Port    string `mapstructure:"port" validate:"required"`
 		DbName  string `mapstructure:"dbName" validate:"required"`
-	} `mapstructure:"Sql" validate:"required"`
+	} `mapstructure:"sql" validate:"required"`
 }
 
 func TestLoadConfig(t *testing.T) {
@@ -61,11 +61,11 @@ sql:
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := LoadConfig[AppConfig](bytes.NewReader(tt.input), "yaml")
 			if tt.wantErr != (err != nil) {
-				t.Fatalf("%s failed. wantErr: %v, err: %v", tt.name, tt.wantErr, err)
+				t.Fatalf("wantErr: %v, err: %v", tt.wantErr, err)
 			}
 			if err == nil {
 				if diff := cmp.Diff(tt.want, got); diff != "" {
-					t.Fatalf("%s mismatch. (-want, +got):\n%s", tt.name, diff)
+					t.Fatalf("Mismatch. (-want, +got):\n%s", diff)
 				}
 			}
 		})
