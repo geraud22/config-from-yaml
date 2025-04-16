@@ -44,6 +44,17 @@ sql:
 			},
 			wantErr: false,
 		},
+		{
+			name: "error on empty field",
+			input: []byte(`
+sql:
+  address: "127.0.0.1"
+  port: ":9"
+`),
+			desiredType: t,
+			want:        AppConfig{},
+			wantErr:     true,
+		},
 	}
 
 	for _, tt := range tests {
