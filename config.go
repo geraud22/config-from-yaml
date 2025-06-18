@@ -8,7 +8,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-func LoadConfig[T any](in io.Reader, filetype string, validator *validatorModule.Validate) (T, error) {
+type Validator interface {
+	Struct(any) error
+}
+
+func LoadConfig[T any](in io.Reader, filetype string, validator Validator) (T, error) {
 	var result T
 	v := viper.New()
 	v.SetConfigType(filetype)

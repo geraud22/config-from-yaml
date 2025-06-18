@@ -15,6 +15,15 @@ type AppConfig struct {
 	} `mapstructure:"sql" validate:"required"`
 }
 
+type MockValidator struct {
+	called bool
+}
+
+func (m *MockValidator) Struct(any) error {
+	m.called = true
+	return nil
+}
+
 func TestLoadConfig(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -22,6 +31,7 @@ func TestLoadConfig(t *testing.T) {
 		desiredType any
 		want        any
 		wantErr     bool
+		validator   *MockValidator
 	}{
 		{
 			name: "correctly load all fields - case insensitive",
@@ -55,13 +65,28 @@ sql:
 			want:        AppConfig{},
 			wantErr:     true,
 		},
+		{
+			name:      "inject custom validator",
+			wantErr:   false,
+			want:      AppConfig{},
+			validator: &MockValidator{},
+		},
 	}
 
 	for _, tt := range tests {
+		var v Validator
+		if tt.validator != nil {
+			v = tt.validator
+		}
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := LoadConfig[AppConfig](bytes.NewReader(tt.input), "yaml")
+			got, err := LoadConfig[AppConfig](bytes.NewReader(tt.input), "yaml", v)
 			if tt.wantErr != (err != nil) {
 				t.Fatalf("wantErr: %v, err: %v", tt.wantErr, err)
+			}
+			if tt.validator != nil {
+				if !tt.validator.called {
+					t.Fatalf("wanted to use mock validator, but it was not called")
+				}
 			}
 			if err == nil {
 				if diff := cmp.Diff(tt.want, got); diff != "" {
